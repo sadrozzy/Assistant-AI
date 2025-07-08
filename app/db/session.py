@@ -5,14 +5,17 @@ from app.utils.logger import logger
 
 logger = logger("db-session")
 
-engine = create_async_engine(settings.DATABASE_URL, echo=True)
+engine = create_async_engine(
+    settings.DATABASE_URL,
+    echo=True,
+)
+
 logger.info(f"Database engine created")
 
 AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,
     expire_on_commit=False,
-    connect_args={"statement_cache_size": 0},
 )
 
 

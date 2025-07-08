@@ -3,8 +3,6 @@ from sqlalchemy import ForeignKey
 from typing import Optional
 from app.models.base import Base
 
-# from app.models.user import User
-
 
 class Task(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)

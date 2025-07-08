@@ -22,7 +22,7 @@ async def voice_message_handler(message: Message):
         )
         file = await message.bot.get_file(file_id)
         file_path = file.file_path
-        # Скачиваем файл
+
         file_url = f"https://api.telegram.org/file/bot{message.bot.token}/{file_path}"
         local_filename = f"/tmp/{uuid.uuid4()}.ogg"
         async with aiohttp.ClientSession() as session:

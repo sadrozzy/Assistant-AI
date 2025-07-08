@@ -42,7 +42,7 @@ async def new_task_handler(message: Message, state: FSMContext):
             )
             repo = TaskRepository(session)
             task = await repo.create_task(user_id=user.id, task_in=task_in)
-            logger.info(f"Task added for user {user.id}: {task.description}")
+            logger.debug(f"Task added for user {user.id}: {task.description}")
             # TODO: Создать событие в Google Calendar через сервис
             await message.answer(f"Задача добавлена: {task.description}")
     except Exception as e:
