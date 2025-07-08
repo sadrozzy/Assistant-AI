@@ -1,0 +1,21 @@
+[project]
+name = "assistant-ai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiogram>=3.21.0",
+    "fastapi[standard]>=0.116.0",
+    "sqlalchemy>=2.0.41",
+    "uvicorn[standard]>=0.35.0",
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
+    "asyncio>=3.4.3",
+    "asyncpg>=0.30.0",
+    "alembic>=1.16.2",
+    "google-api-python-client>=2.175.0",
+    "google-auth-httplib2>=0.2.0",
+    "google-auth-oauthlib>=1.2.2",
+    "rich>=14.0.0",
+]
