@@ -67,10 +67,10 @@ async def show_tasks_handler(message: Message, state: FSMContext):
             tasks = await repo.get_tasks_by_user(user_id=user.id)
             if not tasks:
                 await message.answer("У вас нет задач.")
-                logger.info(f"User {user.id} has no tasks.")
+                logger.debug(f"User {user.id} has no tasks.")
                 return
             text = "\n".join([f"{t.id}. {t.description} ({t.status})" for t in tasks])
-            logger.info(f"User {user.id} tasks listed.")
+            logger.debug(f"User {user.id} tasks listed.")
             await message.answer(f"Ваши задачи:\n{text}")
     except Exception as e:
         logger.exception(f"Error in show_tasks_handler: {e}")
@@ -105,7 +105,7 @@ async def delete_task_handler(message: Message, state: FSMContext):
                 await message.answer("Задача не найдена или не принадлежит вам.")
                 return
             await repo.delete_task(task_id)
-            logger.info(f"Task {task_id} deleted for user {user.id}")
+            logger.debug(f"Task {task_id} deleted for user {user.id}")
             await message.answer(f"Задача {task_id} удалена.")
     except Exception as e:
         logger.exception(f"Error in delete_task_handler: {e}")
