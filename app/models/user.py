@@ -8,5 +8,9 @@ class User(Base):
     name: Mapped[Optional[str]]
     email: Mapped[Optional[str]]
 
+    google_access_token: Mapped[Optional[str]] = mapped_column(nullable=True)
+    google_refresh_token: Mapped[Optional[str]] = mapped_column(nullable=True)
+    google_token_expiry: Mapped[Optional[str]] = mapped_column(nullable=True)
+
     tasks: Mapped[List["Task"]] = relationship(back_populates="user") # type: ignore
     events: Mapped[List["Event"]] = relationship(back_populates="user") # type: ignore

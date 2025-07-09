@@ -1,12 +1,14 @@
 from typing import Optional, List
 from datetime import datetime
 from app.utils.logger import logger
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
 
 
 class GoogleCalendarService:
     def __init__(self, credentials):
         self.credentials = credentials
-        # Здесь будет инициализация клиента Google Calendar
+        self.service = build("calendar", "v3", credentials=self.credentials)
         self.logger = logger("calendar-service")
 
     async def create_event(
@@ -19,9 +21,21 @@ class GoogleCalendarService:
         self.logger.info(
             f"Creating event for user {user_id}: {description} {start} - {end}"
         )
-        # TODO: Реализовать создание события в Google Calendar
-        # Вернуть google_event_id
-        pass
+        event = {
+            "summary": description,
+            "start": {
+                "dateTime": start.isoformat(),
+                "timeZone": "UTC",
+            },
+            "end": {
+                "dateTime": (end or start).isoformat(),
+                "timeZone": "UTC",
+            },
+        }
+        created_event = self.service.events().insert(
+            calendarId="primary", body=event
+        ).execute()
+        return created_event["id"]
 
     async def update_event(
         self,
@@ -33,13 +47,30 @@ class GoogleCalendarService:
         self.logger.info(
             f"Updating event {google_event_id}: {description} {start} - {end}"
         )
-        # TODO: Реализовать обновление события
-        pass
+        event = self.service.events().get(
+            calendarId="primary", eventId=google_event_id
+        ).execute()
+        if description is not None:
+            event["summary"] = description
+        if start is not None:
+            event["start"] = {
+                "dateTime": start.isoformat(),
+                "timeZone": "UTC",
+            }
+        if end is not None:
+            event["end"] = {
+                "dateTime": end.isoformat(),
+                "timeZone": "UTC",
+            }
+        self.service.events().update(
+            calendarId="primary", eventId=google_event_id, body=event
+        ).execute()
 
     async def delete_event(self, google_event_id: str) -> None:
         self.logger.info(f"Deleting event {google_event_id}")
-        # TODO: Реализовать удаление события
-        pass
+        self.service.events().delete(
+            calendarId="primary", eventId=google_event_id
+        ).execute()
 
     async def get_events(
         self,
@@ -50,5 +81,14 @@ class GoogleCalendarService:
         self.logger.info(
             f"Getting events for user {user_id} from {time_min} to {time_max}"
         )
-        # TODO: Получить список событий пользователя
-        pass
+        params = {
+            "calendarId": "primary",
+            "singleEvents": True,
+            "orderBy": "startTime",
+        }
+        if time_min:
+            params["timeMin"] = time_min.isoformat()
+        if time_max:
+            params["timeMax"] = time_max.isoformat()
+        events_result = self.service.events().list(**params).execute()
+        return events_result.get("items", [])

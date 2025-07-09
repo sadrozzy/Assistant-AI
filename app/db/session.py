@@ -7,7 +7,7 @@ logger = logger("db-session")
 
 engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=True,
+    echo=True
 )
 
 logger.info(f"Database engine created")

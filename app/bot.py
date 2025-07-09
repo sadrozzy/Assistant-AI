@@ -1,6 +1,6 @@
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
-from app.bot_handlers import tasks, voice, start
+from app.bot_handlers import tasks, voice, start, google_connect
 import asyncio
 from app.config import settings
 from app.utils.logger import logger
@@ -15,6 +15,7 @@ def register_handlers():
     dp.include_router(start.router)
     dp.include_router(tasks.router)
     dp.include_router(voice.router)
+    dp.include_router(google_connect.router)
 
 
 async def start_bot():
