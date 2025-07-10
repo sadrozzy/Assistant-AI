@@ -11,7 +11,7 @@ class UserRepository:
         self.log = logger("UserRepository")
 
     async def get_or_create_user(
-        self, telegram_id: int, name: Optional[str] = None, email: Optional[str] = None
+        self, telegram_id: int, name: Optional[str] = None
     ) -> User:
         self.log.debug(f"Поиск пользователя telegram_id={telegram_id}")
         result = await self.session.execute(
@@ -21,8 +21,8 @@ class UserRepository:
         if user:
             self.log.debug(f"Пользователь найден: {user}")
             return user
-        self.log.debug(f"Пользователь не найден, создаю нового: telegram_id={telegram_id}, name={name}, email={email}")
-        user = User(telegram_id=telegram_id, name=name, email=email)
+        self.log.debug(f"Пользователь не найден, создаю нового: telegram_id={telegram_id}, name={name}")
+        user = User(telegram_id=telegram_id, name=name)
         self.session.add(user)
         await self.session.commit()
         await self.session.refresh(user)

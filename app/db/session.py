@@ -6,8 +6,7 @@ from app.utils.logger import logger
 logger = logger("db-session")
 
 engine = create_async_engine(
-    settings.DATABASE_URL,
-    echo=True
+    settings.DATABASE_URL
 )
 
 logger.info(f"Database engine created")

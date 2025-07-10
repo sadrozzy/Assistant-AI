@@ -19,4 +19,8 @@ dependencies = [
     "google-auth-oauthlib>=1.2.2",
     "rich>=14.0.0",
     "greenlet>=3.2.3",
+    "boto3>=1.39.3",
+    "assemblyai>=0.42.0",
+    "langchain>=0.3.26",
+    "langchain-community>=0.3.27",
 ]

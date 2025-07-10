@@ -1,5 +1,5 @@
 from aiogram import Router
-from aiogram.filters import Command
+from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from app.db.session import get_session
@@ -26,6 +26,7 @@ async def show_google_menu(target, user_id, state):
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
                     [InlineKeyboardButton(text="Отключить", callback_data="google_disconnect")],
+                    [InlineKeyboardButton(text="⬅️ Назад", callback_data="settings_menu")],
                 ]
             )
         else:
@@ -33,6 +34,7 @@ async def show_google_menu(target, user_id, state):
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
                     [InlineKeyboardButton(text="🔗 Подключить Google Calendar", callback_data="google_connect")],
+                    [InlineKeyboardButton(text="⬅️ Назад", callback_data="settings_menu")],
                 ]
             )
         await target.answer(text, reply_markup=keyboard)
@@ -47,6 +49,7 @@ async def google_connect_callback(callback: CallbackQuery, state: FSMContext):
         reply_markup=InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="Ввести код", callback_data="google_enter_code")],
+                [InlineKeyboardButton(text="⬅️ Назад", callback_data="settings_menu")],
             ]
         )
     )
@@ -54,15 +57,19 @@ async def google_connect_callback(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(lambda c: c.data == "google_enter_code")
 async def google_enter_code_callback(callback: CallbackQuery, state: FSMContext):
-    await callback.message.answer("Пожалуйста, отправьте код авторизации одним сообщением.")
+    await callback.message.answer(
+        "Пожалуйста, отправьте код авторизации одним сообщением.",
+        reply_markup=InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="⬅️ Назад", callback_data="settings_menu")],
+            ]
+        )
+    )
     await state.set_state("waiting_for_google_code")
     await callback.answer()
 
-@router.message()
+@router.message(StateFilter("waiting_for_google_code"))
 async def google_code_inline_handler(message: Message, state: FSMContext):
-    current_state = await state.get_state()
-    if current_state != "waiting_for_google_code":
-        return
     code = message.text.strip()
     data = await state.get_data()
     flow = data.get("google_flow")

@@ -17,9 +17,16 @@ class GoogleCalendarService:
         description: str,
         start: datetime,
         end: Optional[datetime] = None,
+        reminder_minutes: Optional[int] = None,
     ) -> str:
+        """
+        Создаёт событие в Google Calendar.
+        start — начало события (datetime, UTC)
+        end — конец события (datetime, UTC), если не задан — событие считается мгновенным или однодневным
+        reminder_minutes — за сколько минут напомнить (None — не указывать, будет дефолт Google)
+        """
         self.logger.info(
-            f"Creating event for user {user_id}: {description} {start} - {end}"
+            f"Creating event for user {user_id}: {description} {start} - {end}, reminder: {reminder_minutes}"
         )
         event = {
             "summary": description,
@@ -32,6 +39,13 @@ class GoogleCalendarService:
                 "timeZone": "UTC",
             },
         }
+        if reminder_minutes is not None:
+            event["reminders"] = {
+                "useDefault": False,
+                "overrides": [
+                    {"method": "popup", "minutes": reminder_minutes}
+                ]
+            }
         created_event = self.service.events().insert(
             calendarId="primary", body=event
         ).execute()
